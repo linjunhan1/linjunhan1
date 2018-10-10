@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="sizeyunsuan:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/sizeyunsuan_jar</output-path>
+    <root id="archive" name="sizeyunsuan.jar">
+      <element id="module-output" name="sizeyunsuan" />
+    </root>
+  </artifact>
+</component>
