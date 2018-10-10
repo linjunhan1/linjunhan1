@@ -186,7 +186,10 @@ public class Questions {
             operatedNumber = setOperatedNum();
             tempNumber = (Stack<Float>) operatedNumber.clone();
             tempSign = (Stack<Character>) operatedSign.clone();
-            setPositiveNum(getResult(tempNumber, tempSign));
+            if (getResult(tempNumber, tempSign)<0) {
+                i--;
+                continue;
+            }
             System.out.print("第" + (i + 1) + "题 :");
             for (int k=operatedSign.size()-1,j = operatedNumber.size()-1; j > -1&&k>-1; j--,k--) {
                 expression.append(operatedNumber.get(j).intValue());
@@ -207,12 +210,6 @@ public class Questions {
         }
     }
 
-    private static void setPositiveNum(Float answer) {
-        while (answer<0) {
-            operatedSign = setOperatedSign();
-            operatedNumber = setOperatedNum();
-        }
-    }
     private static Stack<Float> setNumberReserve(Stack<Float> number) {
         for(int i=number.size()-1,j=0; i>=j; i--,j++) {
             Float temp1 = number.get(i);
