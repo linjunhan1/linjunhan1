@@ -1,9 +1,15 @@
 package com.company;
 
+import java.text.DecimalFormat;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Questions {
+    private static int grade=0;
+    private static int qNumber;
     private static Stack<Float> operatedNumber = new Stack<Float>();
     private static Stack<Character> operatedSign = new Stack<Character>();
     private static int signCount;
@@ -15,12 +21,9 @@ public class Questions {
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
-        System.out.println("请输入题目数：");
-        Scanner in = new Scanner(System.in);
-        int qNumber = in.nextInt();
-        if (isValid(qNumber)) {
-            printQuestions(qNumber);
-        }
+        System.out.println("若答案为无理小数，则四舍五入保留两位小数，回答正确一题得一分");
+        setQuestionsNum();
+        printQuestions(qNumber);
     }
 
     private static int getPosition(Character sign) {
@@ -32,13 +35,24 @@ public class Questions {
         return -1;
     }
 
-    private static boolean isValid(int number) {
-        boolean isValid = true;
-        if (number <= 0) {
-            System.out.println("题目数不得少于1!");
-            return false;
+    private static void setQuestionsNum() {
+        System.out.println("请输入题目数：");
+        Scanner in = new Scanner(System.in);
+        boolean isVaild = false;
+        while (!isVaild) {
+            try{
+                qNumber = in.nextInt();
+                isVaild = true;
+                if (qNumber<=0) {
+                    System.out.println("输入题目数需大于或等于1");
+                    isVaild = false;
+                }
+            }
+            catch (InputMismatchException e) {
+                System.out.println("输入错误，请重新输入：");
+                in.nextLine();
+            }
         }
-        return isValid;
     }
 
     private static Stack<Character> setOperatedSign() {
@@ -50,7 +64,6 @@ public class Questions {
             sign.add(signArray[index]);
         }
         sign = addKuohao(sign);
-        System.out.println(sign);
         return sign;
     }
 
@@ -184,12 +197,7 @@ public class Questions {
             }
             System.out.print(expression);
             getResult(operatedNumber, operatedSign);
-            if(operatedNumber.get(0).intValue() == operatedNumber.get(0)) {
-                System.out.println(operatedNumber.get(0).intValue());
-            }
-            else {
-                System.out.printf("%.2f\n",operatedNumber.get(0));
-            }
+            answerCheck(inputAnswer());
             expression.delete(0, expression.length());
         }
     }
@@ -214,5 +222,40 @@ public class Questions {
             sign.set(j,temp1);
         }
         return sign;
+    }
+    private static Float inputAnswer() {
+        String answer = null;
+        String pattern = "(\\d+)/(\\d+)";
+        Scanner in = new Scanner(System.in);
+        boolean isVaild = false;
+        while (!isVaild) {
+            try {
+                answer = in.nextLine();
+                isVaild = true;
+                Pattern p = Pattern.compile(pattern);
+                Matcher matcher = p.matcher(answer);
+                if (matcher.find()) {
+                    return Float.parseFloat(matcher.group(1)) / Float.parseFloat(matcher.group(2));
+                }
+                else {
+                    return Float.parseFloat(answer);
+                }
+            }
+            catch (Exception e) {
+                System.out.println("输入错误！请重新输入");
+                in.nextLine();
+            }
+        }
+        return Float.parseFloat("0");
+    }
+    private static void answerCheck(Float answer) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (Math.abs(Float.parseFloat(df.format(answer)) - Float.parseFloat(df.format(operatedNumber.get(0))))<=0) {
+            System.out.println("答案正确，回答下一个问题：");
+            grade++;
+        }
+        else {
+            System.out.println("答案错误，正确答案为：" + df.format(operatedNumber.get(0))+",回答下一个问题：");
+        }
     }
 }
