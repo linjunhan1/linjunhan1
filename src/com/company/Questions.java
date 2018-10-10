@@ -24,6 +24,7 @@ public class Questions {
         System.out.println("若答案为无理小数，则四舍五入保留两位小数，回答正确一题得一分");
         setQuestionsNum();
         printQuestions(qNumber);
+        System.out.println("完成所有题目，你的得分为：" + grade);
     }
 
     private static int getPosition(Character sign) {
@@ -178,10 +179,14 @@ public class Questions {
     }
 
     private static void printQuestions(int qNumber) {
+        Stack<Float> tempNumber;
+        Stack<Character> tempSign;
         for (int i = 0; i < qNumber; i++) {
             operatedSign = setOperatedSign();
             operatedNumber = setOperatedNum();
-            setPositiveNum();
+            tempNumber = (Stack<Float>) operatedNumber.clone();
+            tempSign = (Stack<Character>) operatedSign.clone();
+            setPositiveNum(getResult(tempNumber, tempSign));
             System.out.print("第" + (i + 1) + "题 :");
             for (int k=operatedSign.size()-1,j = operatedNumber.size()-1; j > -1&&k>-1; j--,k--) {
                 expression.append(operatedNumber.get(j).intValue());
@@ -202,8 +207,11 @@ public class Questions {
         }
     }
 
-    private static void setPositiveNum() {
-
+    private static void setPositiveNum(Float answer) {
+        while (answer<0) {
+            operatedSign = setOperatedSign();
+            operatedNumber = setOperatedNum();
+        }
     }
     private static Stack<Float> setNumberReserve(Stack<Float> number) {
         for(int i=number.size()-1,j=0; i>=j; i--,j++) {
