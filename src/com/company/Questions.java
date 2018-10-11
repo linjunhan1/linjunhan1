@@ -1,5 +1,4 @@
 package com.company;
-
 import java.text.DecimalFormat;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -13,10 +12,10 @@ public class Questions {
     private static Stack<Float> operatedNumber = new Stack<Float>();
     private static Stack<Character> operatedSign = new Stack<Character>();
     private static int signCount;
-    private static char[] signArray = new char[]{'+', '-', '×', '÷', '(', ')', '='};
-    private static char[][] signPriority = new char[][]{{'>', '>', '<', '<', '<', '>', '>'},
-            {'>', '>', '<', '<','<', '>', '>'}, {'>', '>', '>', '>', '<', '>', '>'}, {'>', '>', '>', '>', '<', '>', '>'},
-            {'<', '<', '<', '<','<', '=', ' '}, {'>', '>', '>', '>', '>', '>', ' '}};
+    private static char[] signArray = new char[]{'+', '-', '×', '÷','/', '(', ')', '='};
+    private static char[][] signPriority = new char[][]{{'>', '>', '<', '<', '<','<', '>','>'},
+            {'>', '>', '<', '<', '<', '<', '>','>'}, {'>', '>', '>', '>', '<', '<', '>','>'}, {'>', '>', '>', '>', '<', '<', '>','>'},
+            {'>','>','>','>','>','>','>','>'},{'<', '<', '<', '<', '<','<', '=','>'}, {'>', '>', '>', '>', '<', '>', '>','>'},  {'<', '<', '<', '<', '<', '<', '<','<'}};
     private static StringBuilder expression = new StringBuilder();
 
     public static void main(String[] args) {
@@ -57,11 +56,21 @@ public class Questions {
     }
 
     private static Stack<Character> setOperatedSign() {
+    	int index;
+    	boolean flag = true;
         Stack<Character> sign = new Stack<Character>();
-        signCount = (int) (Math.random() * 4) + 1;
+        signCount = (int) (Math.random() * 4) + 2;
         sign.add('=');
         for (int i = 0; i < signCount; i++) {
-            int index = (int) (Math.random() * 4);
+        	index = (int) (Math.random() * 5);
+        	if(flag && signArray[index] == '/') {
+        		sign.add(signArray[index]);
+        		flag = false;
+        		continue;
+        	}
+            while(signArray[index] == '/') {
+            	index = (int) (Math.random() * 5);
+            }
             sign.add(signArray[index]);
         }
         sign = addKuohao(sign);
@@ -103,6 +112,7 @@ public class Questions {
             case '×':
                 return number1 * number2;
             case '÷':
+            case '/':
                 return number1 / number2;
         }
         return -1;
@@ -114,7 +124,7 @@ public class Questions {
         Stack<Character> tempSign = new Stack<Character>();
         Float newData = null, numberTop = null, numberNext = null, numberNextNext = null;
         Character signTop = null, signNext = null;
-        while (operatedNumber.size() != 1 && operatedSign.size() != 1) {
+        while (operatedNumber.size() != 1 && operatedSign.get(operatedSign.size() - 1) != '=') {
             switch (signPriority[getPosition(operatedSign.get(operatedSign.size() - 1))][getPosition(operatedSign.get(operatedSign.size() - 2))]) {
                 case '>':
                     numberTop = operatedNumber.pop();
@@ -264,3 +274,4 @@ public class Questions {
         }
     }
 }
+
